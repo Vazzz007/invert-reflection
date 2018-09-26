@@ -1,5 +1,12 @@
 #include "create_matrix.h"
 
+static int max(int i, int j){
+    if (i >= j) {
+	return i;
+    }
+    return j;
+}
+
 static double sym_f(int i, int j){
     return (double)fabs(i - j);
 }
@@ -10,6 +17,20 @@ static double symnul_f(int i, int j){
 
 static double gilb_f(int i, int j){
     return 1.0 / (i + j + 1.0);
+}
+
+static double up_tr(int i, int j){
+    if (i == j){
+	return (double)1;
+    }
+    if (i < j){
+	return (double)-1;
+    }
+    return (double)0;
+}
+
+static double uniform(int i, int j, int n){
+    return (double)(n - max(i, j));
 }
 
 int create_matrix(double *A, int n, char *formula){
@@ -28,6 +49,14 @@ int create_matrix(double *A, int n, char *formula){
         for (i = 0; i < n; ++i)
             for (j = 0; j < n; ++j)
                 A[i * n + j] = gilb_f(i, j);
+    } else if (strcmp(formula, "1") == 0){
+        for (i = 0; i < n; ++i)
+            for (j = 0; j < n; ++j)
+                A[i * n + j] = up_tr(i, j);
+    } else if (strcmp(formula, "9") == 0){
+        for (i = 0; i < n; ++i)
+            for (j = 0; j < n; ++j)
+                A[i * n + j] = uniform(i, j, n);
     } else {
         printf ("Error: Invalid formula!\n");
         help();
